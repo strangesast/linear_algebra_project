@@ -1,6 +1,38 @@
+<html>
+<head>
+<style>
+input[type=checkbox] {
+   position: absolute;
+   top: -9999px;
+   left: -9999px;
+   /* For mobile, it's typically better to position checkbox on top of clickable
+      area and turn opacity to 0 instead. */
+}
+
+/* Default State */
+div {
+   max-width: 100px;
+   max-height: 100px;
+}
+
+/* Toggled State */
+input[type=checkbox]:checked + .preview{
+  max-width: 1000px;
+  max-height: 1000px;
+}
+</style>
+</head>
 <h2>Linear Algebra Project 2</h2>
 
 <img src="/linear_algebra_project/animation.gif"></img>
+
+<input id="image1" type="checkbox"></input>
+<label class="preview" for="image1">
+  <img src="animation.gif"></img>
+</label>
+
+
+
 <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888"># MA339 Project: Computer Graphics</span>
 <span style="color: #888888"># 10/4/2015</span>
 <span style="color: #888888"># Sam Zagrobelny, 0374837</span>
@@ -168,3 +200,4 @@ conversion <span style="color: #333333">=</span> call([
 
 <span style="color: #008800; font-weight: bold">print</span>(conversion)
 </pre></div>
+</html>
