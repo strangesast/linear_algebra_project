@@ -1,0 +1,168 @@
+<h2>Linear Algebra Project 2</h2>
+<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888"># MA339 Project: Computer Graphics</span>
+<span style="color: #888888"># 10/4/2015</span>
+<span style="color: #888888"># Sam Zagrobelny, 0374837</span>
+
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">__future__</span> <span style="color: #008800; font-weight: bold">import</span> division
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">matplotlib</span>
+matplotlib<span style="color: #333333">.</span>use(<span style="background-color: #fff0f0">&#39;Agg&#39;</span>)
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">numpy</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">np</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">matplotlib.pyplot</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">plt</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">subprocess</span> <span style="color: #008800; font-weight: bold">import</span> call
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">os</span>
+
+<span style="color: #888888">########################################</span>
+<span style="color: #888888"># Part I: Transform &amp; Plot</span>
+<span style="color: #888888">########################################</span>
+
+<span style="color: #888888"># original v&#39;s</span>
+v1 <span style="color: #333333">=</span> [<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">0</span>]
+v2 <span style="color: #333333">=</span> [<span style="color: #0000DD; font-weight: bold">1</span>, <span style="color: #0000DD; font-weight: bold">0</span>]
+v3 <span style="color: #333333">=</span> [<span style="color: #0000DD; font-weight: bold">1</span>, <span style="color: #0000DD; font-weight: bold">1</span>]
+v4 <span style="color: #333333">=</span> [<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">1</span>]
+
+<span style="color: #888888"># original V</span>
+V <span style="color: #333333">=</span> np<span style="color: #333333">.</span>array([v1, v2, v3, v4])<span style="color: #333333">.</span>T
+
+<span style="color: #888888"># figure setup</span>
+
+figures <span style="color: #333333">=</span> []
+axis <span style="color: #333333">=</span> []
+fig_count <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">5</span>
+<span style="color: #008800; font-weight: bold">for</span> i <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">range</span>(<span style="color: #0000DD; font-weight: bold">1</span>,fig_count<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>):
+    fig <span style="color: #333333">=</span> plt<span style="color: #333333">.</span>figure(i)
+    figures<span style="color: #333333">.</span>append(fig)
+    ax <span style="color: #333333">=</span> fig<span style="color: #333333">.</span>add_subplot(<span style="color: #0000DD; font-weight: bold">111</span>, aspect<span style="color: #333333">=</span><span style="color: #6600EE; font-weight: bold">1.0</span>)
+    axis<span style="color: #333333">.</span>append(ax)
+
+<span style="color: #888888"># transform + plot action</span>
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">plot_it</span>(A, V, axis, label):
+    <span style="color: #008800; font-weight: bold">if</span> A <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>: A <span style="color: #333333">=</span> np<span style="color: #333333">.</span>diag([<span style="color: #0000DD; font-weight: bold">1</span>, <span style="color: #0000DD; font-weight: bold">1</span>])
+    V_trans <span style="color: #333333">=</span> np<span style="color: #333333">.</span>dot(A, V)
+    v1, v2, v3, v4 <span style="color: #333333">=</span> <span style="color: #007020">zip</span>(<span style="color: #333333">*</span>V_trans)
+
+    x, y <span style="color: #333333">=</span> <span style="color: #007020">zip</span>(v1, v2, v3, v4, v1)
+    <span style="color: #008800; font-weight: bold">if</span> label <span style="color: #000000; font-weight: bold">is</span> <span style="color: #000000; font-weight: bold">not</span> <span style="color: #007020">None</span>:
+        line3d <span style="color: #333333">=</span> axis<span style="color: #333333">.</span>plot(x, y, label<span style="color: #333333">=</span><span style="color: #007020">str</span>(label))
+    <span style="color: #008800; font-weight: bold">else</span>:
+        line3d <span style="color: #333333">=</span> axis<span style="color: #333333">.</span>plot(x, y)
+
+    <span style="color: #008800; font-weight: bold">return</span> line3d
+
+<span style="color: #888888"># Original</span>
+<span style="color: #008800; font-weight: bold">for</span> ax <span style="color: #000000; font-weight: bold">in</span> axis:
+    original_lines, <span style="color: #333333">=</span> plot_it(<span style="color: #007020">None</span>, V, ax, <span style="background-color: #fff0f0">&#39;original&#39;</span>)
+
+<span style="color: #888888"># Scale</span>
+A_scaled <span style="color: #333333">=</span> np<span style="color: #333333">.</span>diag([<span style="color: #0000DD; font-weight: bold">2</span>, <span style="color: #0000DD; font-weight: bold">2</span>])  <span style="color: #888888"># transformation matrix</span>
+scaled_lines, <span style="color: #333333">=</span> plot_it(A_scaled, V, axis[<span style="color: #0000DD; font-weight: bold">0</span>], <span style="background-color: #fff0f0">&#39;scaled&#39;</span>)
+
+<span style="color: #888888"># Rotate</span>
+rot <span style="color: #333333">=</span> np<span style="color: #333333">.</span>radians(<span style="color: #0000DD; font-weight: bold">15</span>) <span style="color: #888888"># convert to radians</span>
+A_rot <span style="color: #333333">=</span> np<span style="color: #333333">.</span>array([
+        [np<span style="color: #333333">.</span>cos(rot), <span style="color: #333333">-</span>np<span style="color: #333333">.</span>sin(rot)],
+        [np<span style="color: #333333">.</span>sin(rot),  np<span style="color: #333333">.</span>cos(rot)]
+        ])
+rotated_lines, <span style="color: #333333">=</span> plot_it(A_rot, V, axis[<span style="color: #0000DD; font-weight: bold">1</span>], <span style="background-color: #fff0f0">&#39;rotated&#39;</span>)
+
+<span style="color: #888888"># Shear</span>
+k <span style="color: #333333">=</span> <span style="color: #333333">-</span><span style="color: #6600EE; font-weight: bold">0.5</span> <span style="color: #888888"># skew factor &#39;k&#39;</span>
+A_shear <span style="color: #333333">=</span> np<span style="color: #333333">.</span>array([
+    [<span style="color: #0000DD; font-weight: bold">1</span>, k],
+    [<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">1</span>]
+    ])
+sheared_lines, <span style="color: #333333">=</span> plot_it(A_shear, V, axis[<span style="color: #0000DD; font-weight: bold">2</span>], <span style="background-color: #fff0f0">&#39;sheared&#39;</span>)
+
+<span style="color: #888888"># Shear &amp; Rotate</span>
+A_shearrot <span style="color: #333333">=</span> np<span style="color: #333333">.</span>dot(A_rot, A_shear)
+shearrot_lines, <span style="color: #333333">=</span> plot_it(A_shearrot, V, axis[<span style="color: #0000DD; font-weight: bold">3</span>], <span style="background-color: #fff0f0">&#39;sheared then rotated&#39;</span>)
+
+<span style="color: #888888"># Rotate &amp; Shear</span>
+A_rotshear <span style="color: #333333">=</span> np<span style="color: #333333">.</span>dot(A_shear, A_rot)
+rotshear_lines, <span style="color: #333333">=</span> plot_it(A_rotshear, V, axis[<span style="color: #0000DD; font-weight: bold">4</span>], <span style="background-color: #fff0f0">&#39;rotated then sheared&#39;</span>)
+
+padp <span style="color: #333333">=</span> <span style="color: #6600EE; font-weight: bold">0.1</span>
+<span style="color: #008800; font-weight: bold">for</span> ax <span style="color: #000000; font-weight: bold">in</span> axis:
+    ylim <span style="color: #333333">=</span> ax<span style="color: #333333">.</span>get_ylim()
+    xlim <span style="color: #333333">=</span> ax<span style="color: #333333">.</span>get_xlim()
+
+    dy <span style="color: #333333">=</span> <span style="color: #007020">abs</span>(ylim[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">-</span> ylim[<span style="color: #0000DD; font-weight: bold">1</span>])
+    dx <span style="color: #333333">=</span> <span style="color: #007020">abs</span>(xlim[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">-</span> xlim[<span style="color: #0000DD; font-weight: bold">1</span>])
+
+    ax<span style="color: #333333">.</span>axis([
+        xlim[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">-</span> dx<span style="color: #333333">*</span>padp,
+        xlim[<span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">+</span> dx<span style="color: #333333">*</span>padp,
+        ylim[<span style="color: #0000DD; font-weight: bold">0</span>] <span style="color: #333333">-</span> dy<span style="color: #333333">*</span>padp,
+        ylim[<span style="color: #0000DD; font-weight: bold">1</span>] <span style="color: #333333">+</span> dy<span style="color: #333333">*</span>padp
+        ])
+
+    ax<span style="color: #333333">.</span>legend(
+        loc<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;upper center&#39;</span>,
+        bbox_to_anchor<span style="color: #333333">=</span>(<span style="color: #6600EE; font-weight: bold">0.5</span>, <span style="color: #333333">-</span><span style="color: #6600EE; font-weight: bold">0.1</span>),
+        fancybox <span style="color: #333333">=</span> <span style="color: #007020">True</span>,
+        ncol <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>
+    )
+
+    ax<span style="color: #333333">.</span>set_title(<span style="background-color: #fff0f0">&#39;Variety of Transformations&#39;</span>)
+    ax<span style="color: #333333">.</span>set_xlabel(<span style="background-color: #fff0f0">&#39;x&#39;</span>)
+    ax<span style="color: #333333">.</span>set_ylabel(<span style="background-color: #fff0f0">&#39;y&#39;</span>)
+
+
+
+path <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;/home/samuel/Downloads/&#39;</span>
+<span style="color: #008800; font-weight: bold">for</span> i, fig <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">enumerate</span>(figures):
+    fig<span style="color: #333333">.</span>savefig(os<span style="color: #333333">.</span>path<span style="color: #333333">.</span>join(path, <span style="background-color: #fff0f0">&quot;out{}.png&quot;</span><span style="color: #333333">.</span>format(i)) , bbox_inches<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;tight&#39;</span>)
+
+<span style="color: #888888">########################################</span>
+<span style="color: #888888"># Part II: Animation</span>
+<span style="color: #888888">########################################</span>
+
+ani_fig <span style="color: #333333">=</span> plt<span style="color: #333333">.</span>figure(<span style="color: #0000DD; font-weight: bold">20</span>)
+ani_ax <span style="color: #333333">=</span> ani_fig<span style="color: #333333">.</span>add_subplot(<span style="color: #0000DD; font-weight: bold">111</span>)
+ 
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">time</span>
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">animate</span>(frames_per_rev):
+    d_rot <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+    incr <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">360</span> <span style="color: #333333">/</span> frames_per_rev
+    <span style="color: #008800; font-weight: bold">print</span>(incr)
+    <span style="color: #008800; font-weight: bold">while</span> <span style="color: #007020">True</span>:
+        rot <span style="color: #333333">=</span> np<span style="color: #333333">.</span>radians(d_rot) <span style="color: #888888"># convert to radians</span>
+        A_rot <span style="color: #333333">=</span> np<span style="color: #333333">.</span>array([
+                [np<span style="color: #333333">.</span>cos(rot), <span style="color: #333333">-</span>np<span style="color: #333333">.</span>sin(rot)],
+                [np<span style="color: #333333">.</span>sin(rot),  np<span style="color: #333333">.</span>cos(rot)]
+                ])
+        
+        rotated_lines, <span style="color: #333333">=</span> plot_it(A_rot, V, ani_ax, <span style="background-color: #fff0f0">&#39;rotated&#39;</span>)
+        original_lines, <span style="color: #333333">=</span> plot_it(<span style="color: #007020">None</span>, V, ani_ax, <span style="background-color: #fff0f0">&#39;original&#39;</span>)
+
+        d_rot <span style="color: #333333">+=</span> incr
+
+        <span style="color: #008800; font-weight: bold">yield</span> rot
+
+how_many_frames <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">100</span>
+a <span style="color: #333333">=</span> animate(how_many_frames<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>)
+down <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;/home/samuel/Downloads/&#39;</span>
+anipath <span style="color: #333333">=</span> os<span style="color: #333333">.</span>path<span style="color: #333333">.</span>join(down, <span style="background-color: #fff0f0">&quot;animation/&quot;</span>)
+<span style="color: #008800; font-weight: bold">if</span> <span style="color: #000000; font-weight: bold">not</span> os<span style="color: #333333">.</span>path<span style="color: #333333">.</span>exists(anipath): os<span style="color: #333333">.</span>makedirs(anipath)
+<span style="color: #008800; font-weight: bold">for</span> x <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">range</span>(how_many_frames<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">1</span>):
+    ani_ax<span style="color: #333333">.</span>cla()
+    ani_ax<span style="color: #333333">.</span>axis([<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">2</span>, <span style="color: #0000DD; font-weight: bold">2</span>, <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">2</span>, <span style="color: #0000DD; font-weight: bold">2</span>])
+    a<span style="color: #333333">.</span>next()
+    ani_ax<span style="color: #333333">.</span>legend(
+        loc<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;upper center&#39;</span>,
+        bbox_to_anchor<span style="color: #333333">=</span>(<span style="color: #6600EE; font-weight: bold">0.5</span>, <span style="color: #333333">-</span><span style="color: #6600EE; font-weight: bold">0.1</span>),
+        fancybox <span style="color: #333333">=</span> <span style="color: #007020">True</span>,
+        ncol <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">3</span>
+    )
+    ani_fig<span style="color: #333333">.</span>savefig(os<span style="color: #333333">.</span>path<span style="color: #333333">.</span>join(anipath, <span style="background-color: #fff0f0">&quot;ani_out_frame{}.png&quot;</span><span style="color: #333333">.</span>format(x)) , bbox_inches<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;tight&#39;</span>)
+
+
+conversion <span style="color: #333333">=</span> call([
+    <span style="background-color: #fff0f0">&quot;convert&quot;</span>,
+    os<span style="color: #333333">.</span>path<span style="color: #333333">.</span>join(anipath, <span style="background-color: #fff0f0">&quot;ani_out_frame</span><span style="background-color: #eeeeee">%d</span><span style="background-color: #fff0f0">.png[0-{}]&quot;</span><span style="color: #333333">.</span>format(how_many_frames)),
+    <span style="background-color: #fff0f0">&quot;test.gif&quot;</span>
+    ])
+
+<span style="color: #008800; font-weight: bold">print</span>(conversion)
+</pre></div>
