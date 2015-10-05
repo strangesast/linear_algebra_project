@@ -76,6 +76,7 @@ A_rotshear = np.dot(A_shear, A_rot)
 rotshear_lines, = plot_it(A_rotshear, V, axis[4], 'rotated then sheared')
 
 
+padp = 0.1
 for ax in axis:
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
@@ -84,10 +85,10 @@ for ax in axis:
     dx = abs(xlim[0] - xlim[1])
 
     ax.axis([
-        xlim[0] - dx*0.1,
-        xlim[1] + dx*0.1,
-        ylim[0] - dy*0.1,
-        ylim[1] + dy*0.1
+        xlim[0] - dx*padp,
+        xlim[1] + dx*padp,
+        ylim[0] - dy*padp,
+        ylim[1] + dy*padp
         ])
 
     ax.legend(
