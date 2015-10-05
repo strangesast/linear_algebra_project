@@ -163,4 +163,21 @@ conversion = call([
     "test.gif"
     ])
 
-print(conversion)
+
+########################################
+# Part III: Higher Level Animation
+########################################
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+high_fig = plt.figure()
+high_ax = high_fig.add_subplot(111, projection='3d')
+t = np.arange(0, np.pi*4, 0.1)
+x = 2*np.cos(1/2*t)
+y = 0.5*np.sin(t) + 0.5
+z = 1/2*np.sin(3*t)
+
+high_ax.plot(x, y, z)
+
+high_fig.savefig('/home/samuel/Downloads/high.png', bbox_inches='tight')
