@@ -2,10 +2,12 @@
 # 10/4/2015
 # Sam Zagrobelny, 0374837
 
+from __future__ import division
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
 import matplotlib.pyplot as plt
+from subprocess import call
 import os
 
 ########################################
@@ -39,7 +41,10 @@ def plot_it(A, V, axis, label):
     v1, v2, v3, v4 = zip(*V_trans)
 
     x, y = zip(v1, v2, v3, v4, v1)
-    line3d = axis.plot(x, y, label=str(label))
+    if label is not None:
+        line3d = axis.plot(x, y, label=str(label))
+    else:
+        line3d = axis.plot(x, y)
 
     return line3d
 
@@ -75,7 +80,6 @@ shearrot_lines, = plot_it(A_shearrot, V, axis[3], 'sheared then rotated')
 A_rotshear = np.dot(A_shear, A_rot)
 rotshear_lines, = plot_it(A_rotshear, V, axis[4], 'rotated then sheared')
 
-
 padp = 0.1
 for ax in axis:
     ylim = ax.get_ylim()
@@ -104,7 +108,7 @@ for ax in axis:
 
 
 
-path = '.'
+path = '/home/samuel/Downloads/'
 for i, fig in enumerate(figures):
     fig.savefig(os.path.join(path, "out{}.png".format(i)) , bbox_inches='tight')
 
@@ -112,4 +116,51 @@ for i, fig in enumerate(figures):
 # Part II: Animation
 ########################################
 
+ani_fig = plt.figure(20)
+ani_ax = ani_fig.add_subplot(111)
+ 
+import time
 
+def animate(frames_per_rev):
+    d_rot = 0
+    incr = 360 / frames_per_rev
+    print(incr)
+    while True:
+        rot = np.radians(d_rot) # convert to radians
+        A_rot = np.array([
+                [np.cos(rot), -np.sin(rot)],
+                [np.sin(rot),  np.cos(rot)]
+                ])
+        
+        rotated_lines, = plot_it(A_rot, V, ani_ax, 'rotated')
+        original_lines, = plot_it(None, V, ani_ax, 'original')
+
+        d_rot += incr
+
+        yield rot
+
+how_many_frames = 100
+a = animate(how_many_frames+1)
+down = '/home/samuel/Downloads/'
+anipath = os.path.join(down, "animation/")
+if not os.path.exists(anipath): os.makedirs(anipath)
+for x in range(how_many_frames+1):
+    ani_ax.cla()
+    ani_ax.axis([-2, 2, -2, 2])
+    a.next()
+    ani_ax.legend(
+        loc='upper center',
+        bbox_to_anchor=(0.5, -0.1),
+        fancybox = True,
+        ncol = 3
+    )
+    ani_fig.savefig(os.path.join(anipath, "ani_out_frame{}.png".format(x)) , bbox_inches='tight')
+
+
+conversion = call([
+    "convert",
+    os.path.join(anipath, "ani_out_frame%d.png[0-{}]".format(how_many_frames)),
+    "test.gif"
+    ])
+
+print(conversion)
