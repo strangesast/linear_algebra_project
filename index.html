@@ -1,36 +1,18 @@
 <html>
 <head>
 <style>
-input[type=checkbox] {
-   position: absolute;
-   top: -9999px;
-   left: -9999px;
-   /* For mobile, it's typically better to position checkbox on top of clickable
-      area and turn opacity to 0 instead. */
+img.small {
+   max-width: 400px;
+   max-height: 400px;
 }
 
-/* Default State */
-img {
-   max-width: 100px;
-   max-height: 100px;
-}
-
-/* Toggled State */
-input[type=checkbox]:checked > label.preview > img{
-  max-width: 1000px;
-  max-height: 1000px;
-}
 </style>
 </head>
 <h2>Linear Algebra Project 2</h2>
 
 <img src="/linear_algebra_project/animation.gif"></img>
 
-<input id="image1" type="checkbox">
-<label class="preview" for="image1">
-  <img src="animation.gif"></img>
-</label>
-</input>
+<img src="animation.gif" class="small"></img>
 
 
 

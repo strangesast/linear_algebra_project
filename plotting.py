@@ -109,6 +109,7 @@ for ax in axis:
 
 
 path = '/home/samuel/Downloads/'
+path = '.'
 for i, fig in enumerate(figures):
     fig.savefig(os.path.join(path, "out{}.png".format(i)) , bbox_inches='tight')
 
@@ -141,7 +142,7 @@ def animate(frames_per_rev):
 
 how_many_frames = 100
 a = animate(how_many_frames+1)
-down = '/home/samuel/Downloads/'
+down = '.'
 anipath = os.path.join(down, "animation/")
 if not os.path.exists(anipath): os.makedirs(anipath)
 for x in range(how_many_frames+1):
