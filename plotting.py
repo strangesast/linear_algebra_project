@@ -242,7 +242,7 @@ def part_three():
     print('converting frames to .gif')
     conversion = call([
         "convert",
-        os.path.join(path, "high_frame%d.png[0-{}]".format(number_of_frames-1)),
+        os.path.join(high_path, "high_frame%d.png[0-{}]".format(number_of_frames-1)),
         os.path.join(path, "high_animation.gif")
     ])
 
