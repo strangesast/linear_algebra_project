@@ -219,7 +219,13 @@ def part_three():
                 np.sin(t),     # y 
                 1/2 + 1/2*np.sin(2*t) + 1/20*np.sin(20*t) # z
             ])
-            V = [infiniti(t) for t in T] # create (x, y, z) for each 't'
+            cool_infiniti = lambda t: np.diag([
+                np.cos(1/2*t), # x
+                np.sin(t),     # y 
+                1/2 + 2*abs(1/2 - i/(frames+1))*(1/2*np.sin(2*t) + 1/20*np.sin(20*t)) # z
+            ])
+
+            V = [cool_infiniti(t) for t in T] # create (x, y, z) for each 't'
 
             transformed = [np.dot(A,v) for v in V] # apply rotation transformation
 
