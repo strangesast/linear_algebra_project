@@ -118,7 +118,7 @@ for i, fig in enumerate(figures):
 
 ani_fig = plt.figure(20)
 ani_ax = ani_fig.add_subplot(111)
- 
+
 import time
 
 def animate(frames_per_rev):
@@ -131,7 +131,7 @@ def animate(frames_per_rev):
                 [np.cos(rot), -np.sin(rot)],
                 [np.sin(rot),  np.cos(rot)]
                 ])
-        
+
         rotated_lines, = plot_it(A_rot, V, ani_ax, 'rotated')
         original_lines, = plot_it(None, V, ani_ax, 'original')
 
@@ -160,7 +160,7 @@ for x in range(how_many_frames+1):
 conversion = call([
     "convert",
     os.path.join(anipath, "ani_out_frame%d.png[0-{}]".format(how_many_frames)),
-    "test.gif"
+    os.path.join(down, "animation.gif")
     ])
 
 
@@ -173,11 +173,53 @@ from mpl_toolkits.mplot3d import Axes3D
 
 high_fig = plt.figure()
 high_ax = high_fig.add_subplot(111, projection='3d')
-t = np.arange(0, np.pi*4, 0.1)
-x = 2*np.cos(1/2*t)
-y = 0.5*np.sin(t) + 0.5
-z = 1/2*np.sin(3*t)
+high_path = "/home/samuel/Downloads/"
 
-high_ax.plot(x, y, z)
+def animation(frames, axis):
 
-high_fig.savefig('/home/samuel/Downloads/high.png', bbox_inches='tight')
+    i = 0
+    deg = 0
+    while i < frames:
+        th = np.radians(deg) # convert to radians
+        A = np.array([
+            [np.cos(th), -np.sin(th), 0],
+            [np.sin(th),  np.cos(th), 0],
+            [0,           0,          1]
+            ])
+
+        deg+=10
+
+        #axis.plot(x, y, z)
+        T = np.arange(0, np.pi*4, 0.01)
+        V = [np.diag([
+            np.cos(1/2*t),
+            np.sin(t),
+            1/2 + 1/2*np.sin(2*t) + 1/20*np.sin(20*t)
+        ]) for t in T]
+        out = [np.dot(A,v) for v in V]
+        #print(np.linalg.solve(out[2], np.array([1, 1, 1])))
+        #x, y, z = zip(*[np.diag(a) for a in out])
+        x, y, z = zip(*[np.dot(a, np.array([1, 1, 1])) for a in out])
+
+        lines, = axis.plot(x, y, z)
+
+        i+=1
+
+        yield lines
+
+#high_ax.plot(x, y, z)
+number_of_frames = 36
+for i, a in enumerate(animation(number_of_frames, high_ax)):
+    print(i)
+    high_ax.set_xlim3d(-2, 2)
+    high_ax.set_ylim3d(-1, 1)
+    high_ax.set_zlim3d(-1, 1)
+    high_fig.savefig(os.path.join(high_path, 'high_frame{}.png'.format(i)), bbox_inches='tight')
+    high_ax.cla()
+
+path = '/home/samuel/Downloads/'
+conversion = call([
+    "convert",
+    os.path.join(path, "high_frame%d.png[0-{}]".format(number_of_frames-1)),
+    os.path.join(path, "high_animation.gif")
+    ])
