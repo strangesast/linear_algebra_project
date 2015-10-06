@@ -197,7 +197,7 @@ def part_three():
 
     high_fig = plt.figure() # instantiate figure
     high_ax = high_fig.add_subplot(111, projection='3d') # axis for figure
-    high_path = os.path.dirname(os.path.realpath(__file__)) # where's this going
+    high_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'animation/') # where's this going
     
     def animation(frames, axis):
         # do a full revolution, increment by how many degrees
