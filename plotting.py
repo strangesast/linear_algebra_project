@@ -19,18 +19,23 @@ import os
 # transform + plot action
 def plot_it(A, V, axis, label):
     if A is None: A = np.diag([1, 1])
-    V_trans = np.dot(A, V)
-    v1, v2, v3, v4 = zip(*V_trans)
+    V_trans = np.dot(A, V) # apply transformation matrix
+    v1, v2, v3, v4 = zip(*V_trans) # seperate into constituent vectors
 
-    x, y = zip(v1, v2, v3, v4, v1)
+    # (x1, y1), (x2, y2) -> [x1, x2], [y1, y2]
+    x, y = zip(v1, v2, v3, v4, v1) 
+
     if label is not None:
         line3d = axis.plot(x, y, label=str(label))
     else:
         line3d = axis.plot(x, y)
+
     return line3d
 
  
 def part_one():
+    print('\n\nbeginning part one')
+
     # original v's
     v1 = [0, 0]
     v2 = [1, 0]
@@ -41,7 +46,6 @@ def part_one():
     V = np.array([v1, v2, v3, v4]).T
     
     # figure setup
-    
     figures = []
     axis = []
     fig_count = 5
@@ -51,7 +55,6 @@ def part_one():
         ax = fig.add_subplot(111, aspect=1.0)
         axis.append(ax)
     
-   
     # Original
     for ax in axis:
         original_lines, = plot_it(None, V, ax, 'original')
@@ -84,7 +87,7 @@ def part_one():
     A_rotshear = np.dot(A_shear, A_rot)
     rotshear_lines, = plot_it(A_rotshear, V, axis[4], 'rotated then sheared')
     
-    padp = 0.1
+    padp = 0.1 # padding percentage
     for ax in axis:
         ylim = ax.get_ylim()
         xlim = ax.get_xlim()
@@ -114,21 +117,21 @@ def part_one():
     
     path = os.path.dirname(os.path.realpath(__file__))
     for i, fig in enumerate(figures):
-        fig.savefig(os.path.join(path, "out{}.png".format(i)) , bbox_inches='tight')
+        filename = "part_one_figure{}.png".format(i+1)
+        filepath = os.path.join(path, filename)
+        print('saving ' + filename)
+        fig.savefig(filepath, bbox_inches='tight')
 
 ########################################
 # Part II: Animation
 ########################################
-
 def part_two():
-    ani_fig = plt.figure(20)
-    ani_ax = ani_fig.add_subplot(111)
-    
+    print('\n\nbeginning part two')
+
     def animate(frames_per_rev):
         d_rot = 0
         incr = 360 / frames_per_rev
-        print(incr)
-        while True:
+        for i in range(frames_per_rev+1):
             rot = np.radians(d_rot) # convert to radians
             A_rot = np.array([
                     [np.cos(rot), -np.sin(rot)],
@@ -141,80 +144,108 @@ def part_two():
             d_rot += incr
     
             yield rot
+ 
+    # original v's
+    v1 = [0, 0]
+    v2 = [1, 0]
+    v3 = [1, 1]
+    v4 = [0, 1]
     
-    how_many_frames = 100
-    a = animate(how_many_frames+1)
-    
+    # original V
+    V = np.array([v1, v2, v3, v4]).T
+ 
+    ani_fig = plt.figure(20)
+    ani_ax = ani_fig.add_subplot(111)
+
     path = os.path.dirname(os.path.realpath(__file__))
     anipath = os.path.join(path, "animation/")
     if not os.path.exists(anipath): os.makedirs(anipath)
-    for x in range(how_many_frames+1):
-        ani_ax.cla()
+   
+    how_many_frames = 100 # frames per revolution
+    animation = animate(how_many_frames)
+    
+    for i, x in enumerate(animation):
         ani_ax.axis([-2, 2, -2, 2])
-        a.next()
         ani_ax.legend(
             loc='upper center',
             bbox_to_anchor=(0.5, -0.1),
             fancybox = True,
             ncol = 3
         )
-        ani_fig.savefig(os.path.join(anipath, "ani_out_frame{}.png".format(x)) , bbox_inches='tight')
+
+        filename = "ani_out_frame{}.png".format(i)
+        filepath = os.path.join(anipath, filename)
+        print('saving frame {} / {}'.format(i+1, how_many_frames+1))
+
+        ani_fig.savefig(filepath, bbox_inches='tight')
+        ani_ax.cla()
     
-    
+    # convert frames to .gif
+    print('converting frames to .gif')
     conversion = call([
-        "convert",
+        "convert", # imagemagick command
         os.path.join(anipath, "ani_out_frame%d.png[0-{}]".format(how_many_frames)),
         os.path.join(path, "animation.gif")
-        ])
+    ])
 
 
 ########################################
-# Part III: Higher Level Animation
+# Part III: Higher Dimension Animation
 ########################################
-
 def part_three():
-    high_fig = plt.figure()
-    high_ax = high_fig.add_subplot(111, projection='3d')
-    high_path = os.path.dirname(os.path.realpath(__file__))
+    print('\n\nbeginning part three')
+
+    high_fig = plt.figure() # instantiate figure
+    high_ax = high_fig.add_subplot(111, projection='3d') # axis for figure
+    high_path = os.path.dirname(os.path.realpath(__file__)) # where's this going
     
     def animation(frames, axis):
-        i = 0
+        # do a full revolution, increment by how many degrees
+        degree_incr = 360 / frames 
         deg = 0
-        while i < frames:
+        for i in range(frames+1):
             th = np.radians(deg) # convert to radians
             A = np.array([
                 [np.cos(th), -np.sin(th), 0],
                 [np.sin(th),  np.cos(th), 0],
                 [0,           0,          1]
-                ])
+            ])
     
-            deg+=10
+            deg+=degree_incr
     
-            T = np.arange(0, np.pi*4, 0.01)
-            V = [np.diag([
-                np.cos(1/2*t),
-                np.sin(t),
-                1/2 + 1/2*np.sin(2*t) + 1/20*np.sin(20*t)
-            ]) for t in T]
-            out = [np.dot(A,v) for v in V]
+            T = np.arange(0, np.pi*4, 0.01) # 't' values for infiniti loop
+            infiniti = lambda t: np.diag([
+                np.cos(1/2*t), # x
+                np.sin(t),     # y 
+                1/2 + 1/2*np.sin(2*t) + 1/20*np.sin(20*t) # z
+            ])
+            V = [infiniti(t) for t in T] # create (x, y, z) for each 't'
 
-            x, y, z = zip(*[np.dot(a, np.array([1, 1, 1])) for a in out])
+            transformed = [np.dot(A,v) for v in V] # apply rotation transformation
+
+            x, y, z = zip(*[np.dot(a, np.array([1, 1, 1])) for a in transformed])
             lines, = axis.plot(x, y, z)
-            i+=1
+
             yield lines
     
     number_of_frames = 36
     for i, a in enumerate(animation(number_of_frames, high_ax)):
-        print(i)
         high_ax.set_xlim3d(-2, 2)
         high_ax.set_ylim3d(-1, 1)
         high_ax.set_zlim3d(-1, 1)
-        high_fig.savefig(os.path.join(high_path, 'high_frame{}.png'.format(i)), bbox_inches='tight')
+        print('saving frame {} / {}'.format(i+1, number_of_frames+1))
+        filepath = os.path.join(high_path, 'high_frame{}.png'.format(i))
+        high_fig.savefig(filepath, bbox_inches='tight')
         high_ax.cla()
     
     path = os.path.dirname(os.path.realpath(__file__))
+    print('converting frames to .gif')
     conversion = call([
         "convert",
         os.path.join(path, "high_frame%d.png[0-{}]".format(number_of_frames-1)),
         os.path.join(path, "high_animation.gif")
     ])
+
+part_one()
+part_two()
+part_three()
