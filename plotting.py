@@ -34,7 +34,7 @@ def plot_it(A, V, axis, label):
 
 
 default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
-figurenames = ['scaled', 'rotated', 'sheared', 'shearedrotated', 'rotatedsheared']
+figurenames = ['scale', 'rotate', 'shear', 'shearrotate', 'rotateshear']
 
 
 def rotate(deg, axis, V=default):
