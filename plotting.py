@@ -45,7 +45,7 @@ def rotate(deg, axis, V=default, label=None):
             [np.cos(rot), -np.sin(rot)],
             [np.sin(rot),  np.cos(rot)]
             ])
-    Voriginal, original_lines = plot_it(None, V, axis, 'original')
+    Voriginal, original_lines = plot_it(None, default, axis, 'original')
     Vprime, new_lines = plot_it(A, V, axis, label)
     return Vprime
 
@@ -56,7 +56,7 @@ def shear(k, axis, V=default, label=None):
     A = np.array([
         [1, k],
         [0, 1]])
-    Voriginal, original_lines = plot_it(None, V, axis, 'original')
+    Voriginal, original_lines = plot_it(None, default, axis, 'original')
     Vprime, new_lines = plot_it(A, V, axis, label)
 
     return Vprime
@@ -66,7 +66,7 @@ def scale(s, axis, V=default, label=None):
     if label is None: 
        label = "scaled: {}".format(s)
     A = np.diag([1, 1])*s
-    Voriginal, original_lines = plot_it(None, V, axis, 'original')
+    Voriginal, original_lines = plot_it(None, default, axis, 'original')
     Vprime, new_lines = plot_it(A, V, axis, label)
 
     return Vprime
