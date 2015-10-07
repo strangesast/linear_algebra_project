@@ -38,6 +38,7 @@ figurenames = ['scale', 'rotate', 'shear', 'shearrotate', 'rotateshear']
 
 
 def rotate(deg, axis, V=default, label=None):
+    default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
     if label is None:
         label = "rotated: {}$^\circ$".format(deg)
     rot = np.radians(deg) # convert to radians
@@ -51,6 +52,7 @@ def rotate(deg, axis, V=default, label=None):
 
 
 def shear(k, axis, V=default, label=None):
+    default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
     if label is None:
         label = "sheared: {}".format(k)
     A = np.array([
@@ -63,6 +65,7 @@ def shear(k, axis, V=default, label=None):
 
 
 def scale(s, axis, V=default, label=None):
+    default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
     if label is None: 
        label = "scaled: {}".format(s)
     A = np.diag([1, 1])*s
