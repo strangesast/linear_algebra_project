@@ -32,7 +32,85 @@ def plot_it(A, V, axis, label):
 
     return V_trans, line3d
 
- 
+
+default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
+figurenames = ['scaled', 'rotated', 'sheared', 'shearedrotated', 'rotatedsheared']
+
+
+def rotate(deg, axis, V=default):
+    rot = np.radians(deg) # convert to radians
+    A = np.array([
+            [np.cos(rot), -np.sin(rot)],
+            [np.sin(rot),  np.cos(rot)]
+            ])
+    label = "rotated: {}$^\circ$".format(deg)
+
+    Voriginal, original_lines = plot_it(None, V, axis, 'original')
+    Vprime, new_lines = plot_it(A, V, axis, label)
+    return Vprime
+
+
+def shear(k, axis, V=default):
+    A = np.array([
+        [1, k],
+        [0, 1]])
+
+    label = "sheared: {}".format(k)
+
+    Voriginal, original_lines = plot_it(None, V, axis, 'original')
+    Vprime, new_lines = plot_it(A, V, axis, label)
+
+    return Vprime
+
+
+def scale(s, axis, V=default):
+    A = np.diag([1, 1])*s
+    label = "scaled: {}".format(s)
+    Voriginal, original_lines = plot_it(None, V, axis, 'original')
+    Vprime, new_lines = plot_it(A, V, axis, label)
+
+    return Vprime
+
+
+def set_axis_and_save(figure, axis, name):
+    padp = 0.1
+    ylim = axis.get_ylim()
+    xlim = axis.get_xlim()
+
+    dy = abs(ylim[0] - ylim[1])
+    dx = abs(xlim[0] - xlim[1])
+
+    axis.axis([
+        xlim[0] - dx*padp,
+        xlim[1] + dx*padp,
+        ylim[0] - dy*padp,
+        ylim[1] + dy*padp])
+
+    axis.legend(
+        loc='upper center',
+        bbox_to_anchor=(0.5, -0.1),
+        fancybox = True,
+        ncol = 3)
+
+    axis.set_title('Transformation')
+    axis.set_xlabel('x')
+    axis.set_ylabel('y')
+    
+    path = os.path.dirname(os.path.realpath(__file__))
+    filename = "part_one_figure_{}.png".format(name)
+    filepath = os.path.join(path, filename)
+    figure.savefig(filepath, bbox_inches='tight')
+
+    return
+
+#testfig = plt.figure()
+#ax = testfig.add_subplot(111)
+#
+#prime = rotate(30, ax)
+#print(prime)
+#set_axis_and_save(testfig, ax, "rotated")
+
+
 def part_one():
     print('\n\nbeginning part one')
 
@@ -117,7 +195,7 @@ def part_one():
     
     path = os.path.dirname(os.path.realpath(__file__))
     for i, fig in enumerate(figures):
-        filename = "part_one_figure{}.png".format(i+1)
+        filename = "part_one_figure_{}.png".format(figurenames[i])
         filepath = os.path.join(path, filename)
         print('saving ' + filename)
         fig.savefig(filepath, bbox_inches='tight')
