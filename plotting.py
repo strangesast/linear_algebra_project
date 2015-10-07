@@ -37,35 +37,35 @@ default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
 figurenames = ['scale', 'rotate', 'shear', 'shearrotate', 'rotateshear']
 
 
-def rotate(deg, axis, V=default):
+def rotate(deg, axis, V=default, label=None):
+    if label is None:
+        label = "rotated: {}$^\circ$".format(deg)
     rot = np.radians(deg) # convert to radians
     A = np.array([
             [np.cos(rot), -np.sin(rot)],
             [np.sin(rot),  np.cos(rot)]
             ])
-    label = "rotated: {}$^\circ$".format(deg)
-
     Voriginal, original_lines = plot_it(None, V, axis, 'original')
     Vprime, new_lines = plot_it(A, V, axis, label)
     return Vprime
 
 
-def shear(k, axis, V=default):
+def shear(k, axis, V=default, label=None):
+    if label is None:
+        label = "sheared: {}".format(k)
     A = np.array([
         [1, k],
         [0, 1]])
-
-    label = "sheared: {}".format(k)
-
     Voriginal, original_lines = plot_it(None, V, axis, 'original')
     Vprime, new_lines = plot_it(A, V, axis, label)
 
     return Vprime
 
 
-def scale(s, axis, V=default):
+def scale(s, axis, V=default, label=None):
+    if label is None: 
+       label = "scaled: {}".format(s)
     A = np.diag([1, 1])*s
-    label = "scaled: {}".format(s)
     Voriginal, original_lines = plot_it(None, V, axis, 'original')
     Vprime, new_lines = plot_it(A, V, axis, label)
 
