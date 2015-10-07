@@ -30,7 +30,7 @@ def plot_it(A, V, axis, label):
     else:
         line3d = axis.plot(x, y)
 
-    return line3d
+    return V_trans, line3d
 
  
 def part_one():
@@ -57,11 +57,11 @@ def part_one():
     
     # Original
     for ax in axis:
-        original_lines, = plot_it(None, V, ax, 'original')
+        transformed, original_lines = plot_it(None, V, ax, 'original')
     
     # Scale
     A_scaled = np.diag([2, 2])  # transformation matrix
-    scaled_lines, = plot_it(A_scaled, V, axis[0], 'scaled')
+    scaled, scaled_lines = plot_it(A_scaled, V, axis[0], 'scaled')
     
     # Rotate
     rot = np.radians(15) # convert to radians
@@ -69,7 +69,7 @@ def part_one():
             [np.cos(rot), -np.sin(rot)],
             [np.sin(rot),  np.cos(rot)]
             ])
-    rotated_lines, = plot_it(A_rot, V, axis[1], 'rotated')
+    rotated, rotated_lines = plot_it(A_rot, V, axis[1], 'rotated')
     
     # Shear
     k = -0.5 # skew factor 'k'
@@ -77,15 +77,15 @@ def part_one():
         [1, k],
         [0, 1]
         ])
-    sheared_lines, = plot_it(A_shear, V, axis[2], 'sheared')
+    sheared, sheared_lines = plot_it(A_shear, V, axis[2], 'sheared')
     
     # Shear & Rotate
     A_shearrot = np.dot(A_rot, A_shear)
-    shearrot_lines, = plot_it(A_shearrot, V, axis[3], 'sheared then rotated')
+    shearrotated, shearrot_lines = plot_it(A_shearrot, V, axis[3], 'sheared then rotated')
     
     # Rotate & Shear
     A_rotshear = np.dot(A_shear, A_rot)
-    rotshear_lines, = plot_it(A_rotshear, V, axis[4], 'rotated then sheared')
+    rotsheared, rotshear_lines = plot_it(A_rotshear, V, axis[4], 'rotated then sheared')
     
     padp = 0.1 # padding percentage
     for ax in axis:
@@ -138,8 +138,8 @@ def part_two():
                     [np.sin(rot),  np.cos(rot)]
                     ])
     
-            rotated_lines, = plot_it(A_rot, V, ani_ax, 'rotated')
-            original_lines, = plot_it(None, V, ani_ax, 'original')
+            rotated, rotated_lines = plot_it(A_rot, V, ani_ax, 'rotated')
+            original, original_lines = plot_it(None, V, ani_ax, 'original')
     
             d_rot += incr
     
@@ -251,7 +251,3 @@ def part_three():
         os.path.join(high_path, "high_frame%d.png[0-{}]".format(number_of_frames-1)),
         os.path.join(path, "high_animation.gif")
     ])
-
-part_one()
-part_two()
-part_three()
