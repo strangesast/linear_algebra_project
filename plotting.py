@@ -68,8 +68,8 @@ def shear(k, axis, V=the_default, label=None):
     if label is None:
         label = "sheared: {}".format(k)
     A = np.array([
-        [1, k],
-        [0, 1]])
+        [1, 0],
+        [k, 1]])
     Voriginal, original_lines = plot_it(None, default, axis, 'original')
     Vprime, new_lines = plot_it(A, V, axis, label)
 
@@ -167,8 +167,8 @@ def part_one():
     # Shear
     k = -0.5 # skew factor 'k'
     A_shear = np.array([
-        [1, k],
-        [0, 1]
+        [1, 0],
+        [k, 1]
         ])
     sheared, sheared_lines = plot_it(A_shear, V, axis[2], 'sheared')
     
