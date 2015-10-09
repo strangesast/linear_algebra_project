@@ -20,11 +20,11 @@ import os
 def plot_it(A, V, axis, label):
     if A is None: A = np.diag([1, 1])
     V_trans = np.dot(A, V) # apply transformation matrix
-    V_trans = V_trans[0:2, :]
-    v1, v2, v3, v4 = zip(*V_trans) # seperate into constituent vectors
+    V_trans = V_trans[0:2, :] # limit to two dimensions
+    columns = zip(*V_trans) # seperate into constituent vectors
 
     # (x1, y1), (x2, y2) -> [x1, x2], [y1, y2]
-    x, y = zip(v1, v2, v3, v4, v1) 
+    x, y = zip(*columns + [columns[0]])
 
     if label is not None:
         line3d = axis.plot(x, y, label=str(label))
@@ -34,12 +34,23 @@ def plot_it(A, V, axis, label):
     return V_trans, line3d
 
 
-default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
+the_default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
+ang = np.pi / 6
+l = 1/2
+# hexagon
+#the_default = np.array([
+#    [-l/2, 0],
+#    [-l/2 - np.sin(ang), l*np.cos(ang)],
+#    [-l/2, 2*l*np.cos(ang)],
+#    [ l/2, 2*l*np.cos(ang)],
+#    [ l/2 + np.sin(ang), l*np.cos(ang)],
+#    [ l/2, 0]
+#    ]).T
 figurenames = ['scale', 'rotate', 'shear', 'shearrotate', 'rotateshear']
 
 
-def rotate(deg, axis, V=default, label=None):
-    default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
+def rotate(deg, axis, V=the_default, label=None):
+    default = the_default
     if label is None:
         label = "rotated: {}$^\circ$".format(deg)
     rot = np.radians(deg) # convert to radians
@@ -52,8 +63,8 @@ def rotate(deg, axis, V=default, label=None):
     return Vprime
 
 
-def shear(k, axis, V=default, label=None):
-    default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
+def shear(k, axis, V=the_default, label=None):
+    default = the_default
     if label is None:
         label = "sheared: {}".format(k)
     A = np.array([
@@ -65,8 +76,8 @@ def shear(k, axis, V=default, label=None):
     return Vprime
 
 
-def scale(s, axis, V=default, label=None):
-    default = np.array([[0, 0], [1, 0], [1, 1], [0, 1]]).T
+def scale(s, axis, V=the_default, label=None):
+    default = the_default
     if label is None: 
        label = "scaled: {}".format(s)
     A = np.diag([1, 1])*s
