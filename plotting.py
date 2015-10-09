@@ -20,6 +20,7 @@ import os
 def plot_it(A, V, axis, label):
     if A is None: A = np.diag([1, 1])
     V_trans = np.dot(A, V) # apply transformation matrix
+    V_trans = V_trans[0:2, :]
     v1, v2, v3, v4 = zip(*V_trans) # seperate into constituent vectors
 
     # (x1, y1), (x2, y2) -> [x1, x2], [y1, y2]
@@ -211,8 +212,8 @@ def part_two():
 
     def animate(frames_per_rev):
         d_rot = 0
-        incr = 360 / frames_per_rev
-        for i in range(frames_per_rev+1):
+        rot_incr = 360 / frames_per_rev
+        for i in range(frames_per_rev + 1):
             rot = np.radians(d_rot) # convert to radians
             A_rot = np.array([
                     [np.cos(rot), -np.sin(rot)],
@@ -222,9 +223,65 @@ def part_two():
             rotated, rotated_lines = plot_it(A_rot, V, ani_ax, 'rotated')
             original, original_lines = plot_it(None, V, ani_ax, 'original')
     
-            d_rot += incr
+            d_rot += rot_incr
     
             yield rot
+
+        xfin = 20
+        yfin = 12
+        x = 0
+        y = 0
+        x_incr = xfin / frames_per_rev 
+        y_incr = yfin / frames_per_rev
+        for i in range(frames_per_rev):
+            A_trans = np.array([
+                [1, 0, x],
+                [0, 1, y],
+                [0, 0, 1]
+            ])
+            rotated, rotated_lines = plot_it(A_trans, np.vstack((V, np.ones(V.shape[1]))), ani_ax, 'translated')
+            original, original_lines = plot_it(None, V, ani_ax, 'original')
+
+            x+=x_incr
+            y+=y_incr
+
+            yield rotated
+
+
+        d_rot = 0
+        rot_incr = 180 / frames_per_rev * 2
+
+        for i in range(int(frames_per_rev / 2) + 1):
+            rot = np.radians(d_rot) # convert to radians
+            A_rot = np.array([
+                    [np.cos(rot), -np.sin(rot), 0],
+                    [np.sin(rot),  np.cos(rot), 0],
+                    [0, 0, 1]
+                    ])
+
+            A_trans1 = np.array([
+                [1, 0, -xfin],
+                [0, 1, -yfin],
+                [0, 0, 1]
+                ])
+
+            A_trans2 = np.array([
+                [1, 0, xfin],
+                [0, 1, yfin],
+                [0, 0, 1]
+                ])
+
+            V_large = np.vstack((V, np.ones(V.shape[1])))
+            V_large = np.dot(A_trans2, V_large)
+            A_both = np.dot(A_rot, A_trans1)
+            A_both = np.dot(A_trans2, A_both)
+
+            rotated, rotated_lines = plot_it(A_both, V_large, ani_ax, 'rotated')
+            original, original_lines = plot_it(None, V, ani_ax, 'original')
+
+            d_rot += rot_incr
+
+            yield d_rot
  
     # original v's
     v1 = [0, 0]
@@ -235,18 +292,19 @@ def part_two():
     # original V
     V = np.array([v1, v2, v3, v4]).T
  
-    ani_fig = plt.figure(20)
+    ani_fig = plt.figure()
     ani_ax = ani_fig.add_subplot(111)
 
     path = os.path.dirname(os.path.realpath(__file__))
     anipath = os.path.join(path, "animation/")
     if not os.path.exists(anipath): os.makedirs(anipath)
    
-    how_many_frames = 100 # frames per revolution
+    how_many_frames = 40 # frames per revolution
     animation = animate(how_many_frames)
     
+    i = 0
     for i, x in enumerate(animation):
-        ani_ax.axis([-2, 2, -2, 2])
+        ani_ax.axis([-4, 24, -4, 16])
         ani_ax.legend(
             loc='upper center',
             bbox_to_anchor=(0.5, -0.1),
@@ -256,16 +314,17 @@ def part_two():
 
         filename = "ani_out_frame{}.png".format(i)
         filepath = os.path.join(anipath, filename)
-        print('saving frame {} / {}'.format(i+1, how_many_frames+1))
+        print('saving frame {}'.format(i+1))
 
         ani_fig.savefig(filepath, bbox_inches='tight')
         ani_ax.cla()
     
     # convert frames to .gif
     print('converting frames to .gif')
+    print(i)
     conversion = call([
         "convert", # imagemagick command
-        os.path.join(anipath, "ani_out_frame%d.png[0-{}]".format(how_many_frames)),
+        os.path.join(anipath, "ani_out_frame%d.png[0-{}]".format(i)),
         os.path.join(path, "animation.gif")
     ])
 
