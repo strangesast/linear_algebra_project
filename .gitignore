@@ -1,4 +1,4 @@
-*.pyc
-*.png
-*.gif
-animation/
+/**/*.pyc
+/**/*.png
+/**/*.gif
+project2/animation/
