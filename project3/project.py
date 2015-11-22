@@ -4,6 +4,7 @@ from sympy import Symbol, Matrix, pprint, eye
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import csv
 
 # compute eigenvalues and eigenvectors of a continuous dynamical system
 # consider sys. with 5 masses (mi)
@@ -93,7 +94,7 @@ v = np.dot(np.dot(PT, K_norm), P)
 xdoto = np.zeros(A.shape[0])
 xo = np.zeros(A.shape[0])
 xo[-1] = 1
-xo[0] = -1
+#xo[0] = -1
 
 S = np.dot(M_inv, P)
 
@@ -122,6 +123,10 @@ for ti in t:
     _all.append(np.dot(P, ra))
 
     
+with open('out.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerows(_all)
+
 by_xi = zip(*_all)
 
 fig = plt.figure()
